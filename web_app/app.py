@@ -1,18 +1,10 @@
-"""
-Flask Web应用主程序 - 修复版本
-"""
-
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import os
 import sys
 
 # 添加项目根目录到Python路径
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-
-from web_app.api import api_bp
-from web_app.models import PortfolioAnalyzer
-
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def create_app():
     """创建Flask应用"""
@@ -23,17 +15,6 @@ def create_app():
     # 启用CORS
     CORS(app)
     
-    # 注册蓝图
-    app.register_blueprint(api_bp, url_prefix='/api')
-    
-    # 初始化全局分析器
-    app.analyzer = PortfolioAnalyzer()
-    
-    return app
-
-
-def create_routes(app):
-    """创建路由"""
     @app.route('/')
     def index():
         """主页"""
@@ -42,7 +23,7 @@ def create_routes(app):
     @app.route('/dashboard')
     def dashboard():
         """仪表盘页面"""
-        return render_template('dashboard.html')
+        return render_template('index.html')
 
     @app.route('/manual')
     def manual_mode():
@@ -53,14 +34,9 @@ def create_routes(app):
     def auto_mode():
         """自动模式页面"""
         return render_template('auto.html')
-
+    
     return app
 
-
 if __name__ == '__main__':
-    # 创建应用
     app = create_app()
-    app = create_routes(app)
-    
-    # 运行应用
     app.run(host='0.0.0.0', port=5000, debug=True)
