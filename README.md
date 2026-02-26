@@ -29,8 +29,8 @@
 
 ### 安装依赖
 ```bash
-# Python依赖
-pip install -r web_app/requirements_mac.txt
+# Python依赖（简化版本，避免编译问题）
+pip install -r web_app/requirements_simple.txt
 
 # Node.js依赖  
 cd frontend && npm install
@@ -65,3 +65,4 @@ openclaw_fundcoach/
 - 所有结果基于历史数据，**不构成投资建议**
 - 系统需要网络连接以获取基金数据
 - 首次运行可能需要几分钟来下载和处理数据
+- 如果遇到依赖问题，使用 `requirements_simple.txt` 替代
