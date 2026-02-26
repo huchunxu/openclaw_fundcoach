@@ -4,14 +4,12 @@
   "description": "OpenClaw FundCoach - 中国公募基金量化组合研究与模拟智能体",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "cd web_app && python app.py",
+    "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd web_app && python3 app.py",
     "dev:frontend": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build",
-    "start": "python web_app/app.py",
-    "test": "python -m unittest discover tests/"
+    "start": "python3 web_app/app.py",
+    "test": "python3 -m unittest discover tests/"
   },
-  "dependencies": {
-    "concurrently": "^8.2.0"
-  }
+  "dependencies": {}
 }
