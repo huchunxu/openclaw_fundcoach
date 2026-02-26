@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
 import sys
@@ -9,31 +9,31 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 def create_app():
     """创建Flask应用"""
     app = Flask(__name__, 
-                template_folder=os.path.join(os.path.dirname(__file__), 'templates'))
+                template_folder=os.path.join(os.path.dirname(__file__), 'templates'),
+                static_folder=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend', 'dist'))
     app.config['SECRET_KEY'] = 'openclaw-fundcoach-secret-key'
     
     # 启用CORS
     CORS(app)
     
-    @app.route('/')
-    def index():
-        """主页"""
-        return render_template('index.html')
-
-    @app.route('/dashboard')
-    def dashboard():
-        """仪表盘页面"""
-        return render_template('index.html')
-
-    @app.route('/manual')
-    def manual_mode():
-        """手动模式页面"""
-        return render_template('manual.html')
-
-    @app.route('/auto')
-    def auto_mode():
-        """自动模式页面"""
-        return render_template('auto.html')
+    # API路由
+    @app.route('/api/health')
+    def health_check():
+        return jsonify({'status': 'healthy'})
+    
+    @app.route('/api/analyze', methods=['POST'])
+    def analyze_portfolio():
+        from web_app.api import analyze_portfolio
+        return analyze_portfolio()
+    
+    # 静态文件服务（生产模式）
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def serve_frontend(path):
+        if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+            return send_from_directory(app.static_folder, path)
+        else:
+            return send_from_directory(app.static_folder, 'index.html')
     
     return app
 
