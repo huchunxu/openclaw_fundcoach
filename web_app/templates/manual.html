@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}OpenClaw FundCoach - 手动模式{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-user"></i> 手动模式</h2>
+        <p>指定基金代码，进行深度分析和组合优化。</p>
+        
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">基金输入</h5>
+                <form id="manualForm">
+                    <div class="mb-3">
+                        <label for="fundCodes" class="form-label">基金代码（逗号分隔）</label>
+                        <input type="text" class="form-control" id="fundCodes" name="fund_codes" placeholder="例如: 000001,000002,000003" required>
+                        <div class="form-text">请输入6位数字基金代码，至少1个</div>
+                    </div>
+                    <button type="submit" class="btn btn-success" id="analyzeBtn">
+                        <i class="fas fa-chart-line"></i> 开始分析
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div id="resultsSection" class="mt-4" style="display: none;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">分析结果</h5>
+                    <div id="resultsContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('manualForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 分析中...';
+    analyzeBtn.disabled = true;
+    
+    try {
+        // 获取基金代码
+        const fundCodesInput = document.getElementById('fundCodes').value;
+        const fundCodes = fundCodesInput.split(',').map(code => code.trim()).filter(code => code.length === 6 && /^\d+$/.test(code));
+        
+        if (fundCodes.length === 0) {
+            alert('请输入有效的6位数字基金代码');
+            return;
+        }
+        
+        // 调用API
+        const response = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                fund_codes: fundCodes,
+                mode: 'manual'
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            displayResults(result.data);
+        } else {
+            alert('分析失败: ' + result.error);
+        }
+    } catch (error) {
+        alert('请求失败: ' + error.message);
+    } finally {
+        analyzeBtn.innerHTML = '<i class="fas fa-chart-line"></i> 开始分析';
+        analyzeBtn.disabled = false;
+    }
+});
+
+function displayResults(data) {
+    const resultsSection = document.getElementById('resultsSection');
+    const resultsContent = document.getElementById('resultsContent');
+    
+    // 构建HTML内容
+    let html = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6>组合概览</h6>
+                <ul class="list-group">
+                    <li class="list-group-item">预期年化收益: ${(data.analysis_results.portfolio_results.annual_return * 100).toFixed(2)}%</li>
+                    <li class="list-group-item">波动率: ${(data.analysis_results.portfolio_results.volatility * 100).toFixed(2)}%</li>
+                    <li class="list-group-item">最大回撤: ${(data.analysis_results.portfolio_results.max_drawdown * 100).toFixed(2)}%</li>
+                    <li class="list-group-item">夏普比率: ${data.analysis_results.portfolio_results.sharpe_ratio.toFixed(2)}</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h6>选中基金</h6>
+                <ul class="list-group">
+                    ${Object.entries(data.analysis_results.portfolio_weights).map(([code, weight]) => 
+                        `<li class="list-group-item">${code}: ${(weight * 100).toFixed(1)}%</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h6>风险提示</h6>
+            <div class="alert alert-warning">${data.risk_disclosure}</div>
+        </div>
+        
+        <div class="mt-4">
+            <h6>可视化图表</h6>
+            <p>图表功能将在后续版本中完善</p>
+        </div>
+    `;
+    
+    resultsContent.innerHTML = html;
+    resultsSection.style.display = 'block';
+    
+    // 滚动到结果区域
+    resultsSection.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+{% endblock %}

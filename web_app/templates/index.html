@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}OpenClaw FundCoach - 首页{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 text-center">
+        <h1 class="display-4 mb-4">OpenClaw FundCoach</h1>
+        <p class="lead">中国公募基金量化组合研究与模拟智能体</p>
+        
+        <div class="row mt-5">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-robot"></i> 自动模式</h5>
+                        <p class="card-text">全市场基金筛选，基于因子模型自动构建最优投资组合。</p>
+                        <a href="/auto" class="btn btn-primary">开始自动分析</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-user"></i> 手动模式</h5>
+                        <p class="card-text">指定基金代码，进行深度分析和组合优化。</p>
+                        <a href="/manual" class="btn btn-success">开始手动分析</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle"></i> 功能特性</h6>
+                    <ul>
+                        <li>基金数据抓取（天天基金）</li>
+                        <li>因子分析和基金打分</li>
+                        <li>组合优化和权重分配</li>
+                        <li>历史回测（3年+牛熊周期）</li>
+                        <li>风险指标计算和压力测试</li>
+                        <li>交互式可视化图表</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
