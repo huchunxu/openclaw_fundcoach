@@ -1,10 +1,10 @@
 <template>
   <div id="app" class="min-h-screen bg-gray-50">
     <!-- 头部导航 -->
-    <header class="bg-white shadow-sm">
+    <header class="bg-white shadow">
       <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold text-gray-900">基金智能助手</h1>
-        <p class="mt-2 text-gray-600">帮您轻松选择优质基金，智能配置投资组合</p>
+        <h1 class="text-3xl font-bold text-gray-900">OpenClaw FundCoach</h1>
+        <p class="mt-2 text-gray-600">中国公募基金量化组合研究与模拟智能体</p>
       </div>
     </header>
     
