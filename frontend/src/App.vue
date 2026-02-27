@@ -31,26 +31,19 @@
       
       <!-- 选项卡内容 -->
       <div v-if="activeTab === 0">
-        <FundList @fund-selected="handleFundSelected" />
+        <SmartAnalyzer />
       </div>
       <div v-else-if="activeTab === 1">
-        <StrategyAnalyzer :selected-fund="selectedFund" />
+        <FundList @fund-selected="handleFundSelected" />
       </div>
       <div v-else-if="activeTab === 2">
-        <PortfolioOptimizer />
+        <StrategyAnalyzer :selected-fund="selectedFund" />
       </div>
       <div v-else-if="activeTab === 3">
-        <RiskAnalyzer />
+        <PortfolioOptimizer />
       </div>
       <div v-else-if="activeTab === 4">
-        <div class="bg-white p-6 rounded-lg shadow">
-          <h2 class="text-2xl font-bold mb-4">完整分析流程</h2>
-          <p class="text-gray-600 mb-4">一键完成从基金分析到组合优化再到风险评估的完整流程。</p>
-          <!-- 这里可以添加完整的端到端分析组件 -->
-          <div class="text-center py-8 text-gray-500">
-            完整分析功能开发中...
-          </div>
-        </div>
+        <RiskAnalyzer />
       </div>
     </main>
     
@@ -66,6 +59,7 @@
 </template>
 
 <script>
+import SmartAnalyzer from './components/SmartAnalyzer.vue';
 import FundList from './components/FundList.vue';
 import StrategyAnalyzer from './components/StrategyAnalyzer.vue';
 import PortfolioOptimizer from './components/PortfolioOptimizer.vue';
@@ -74,6 +68,7 @@ import RiskAnalyzer from './components/RiskAnalyzer.vue';
 export default {
   name: 'App',
   components: {
+    SmartAnalyzer,
     FundList,
     StrategyAnalyzer,
     PortfolioOptimizer,
@@ -82,14 +77,14 @@ export default {
   data() {
     return {
       activeTab: 0,
-      tabs: ['基金列表', '基金策略分析', '组合优化器', '风险分析器', '完整分析'],
+      tabs: ['智能分析', '基金列表', '策略分析', '组合优化', '风险分析'],
       selectedFund: null
     };
   },
   methods: {
     handleFundSelected(fund) {
       this.selectedFund = fund;
-      this.activeTab = 1; // 切换到策略分析页面
+      this.activeTab = 2; // 切换到策略分析页面
     }
   }
 };
