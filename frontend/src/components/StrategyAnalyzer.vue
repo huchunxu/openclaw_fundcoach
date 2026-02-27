@@ -2,6 +2,19 @@
   <div class="strategy-analyzer">
     <h2 class="text-2xl font-bold mb-4">基金策略分析</h2>
     
+    <!-- 已选择的基金信息 -->
+    <div v-if="selectedFund" class="mb-6 bg-blue-50 p-4 rounded-lg">
+      <h3 class="text-lg font-semibold mb-2">已选择基金</h3>
+      <p class="text-blue-800">{{ selectedFund.code }} - {{ selectedFund.name }}</p>
+      <button 
+        @click="analyzeSelectedFund" 
+        :disabled="analyzing"
+        class="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded-md"
+      >
+        {{ analyzing ? '分析中...' : '分析选中基金' }}
+      </button>
+    </div>
+    
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- 基金输入区域 -->
       <div class="bg-white p-6 rounded-lg shadow">
@@ -72,6 +85,12 @@ import axios from 'axios';
 
 export default {
   name: 'StrategyAnalyzer',
+  props: {
+    selectedFund: {
+      type: Object,
+      default: null
+    }
+  },
   data() {
     return {
       fundCode: '',
@@ -103,6 +122,37 @@ export default {
       } catch (error) {
         console.error('分析失败:', error);
         alert('分析失败: ' + error.message);
+      } finally {
+        this.analyzing = false;
+      }
+    },
+    async analyzeSelectedFund() {
+      if (!this.selectedFund) return;
+      
+      try {
+        this.analyzing = true;
+        
+        // 获取基金详细数据
+        const response = await axios.get(`/api/funds/${this.selectedFund.code}`);
+        
+        if (response.data.status === 'success') {
+          const returns = response.data.nav_history.map(item => item.daily_return);
+          
+          const factorResponse = await axios.post('/api/factors', {
+            fund_data: { returns }
+          });
+          
+          if (factorResponse.data.status === 'success') {
+            this.analysisResult = factorResponse.data;
+          } else {
+            throw new Error(factorResponse.data.error);
+          }
+        } else {
+          throw new Error(response.data.error);
+        }
+      } catch (error) {
+        console.error('分析选中基金失败:', error);
+        alert('分析选中基金失败: ' + error.message);
       } finally {
         this.analyzing = false;
       }

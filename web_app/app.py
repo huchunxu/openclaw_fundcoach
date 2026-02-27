@@ -16,6 +16,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from strategy_agent import StrategyAgent
 from portfolio_agent import PortfolioAgent  
 from risk_agent import RiskAgent
+from data_agent import DataAgent
 
 app = Flask(__name__, 
             template_folder='../frontend/dist',
@@ -25,6 +26,7 @@ app = Flask(__name__,
 strategy_agent = StrategyAgent()
 portfolio_agent = PortfolioAgent()
 risk_agent = RiskAgent()
+data_agent = DataAgent()
 
 @app.route('/')
 def index():
@@ -153,9 +155,70 @@ def health_check():
         'agents': {
             'strategy': 'active',
             'portfolio': 'active', 
-            'risk': 'active'
+            'risk': 'active',
+            'data': 'active'
         }
     })
+
+@app.route('/api/funds/search', methods=['GET'])
+def search_funds():
+    """搜索基金"""
+    try:
+        keyword = request.args.get('keyword', '')
+        limit = int(request.args.get('limit', 50))
+        
+        funds = data_agent.search_funds(keyword, limit)
+        
+        return jsonify({
+            'funds': funds,
+            'count': len(funds),
+            'status': 'success'
+        })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/funds/list', methods=['GET'])
+def get_fund_list():
+    """获取基金列表（分页）"""
+    try:
+        page = int(request.args.get('page', 1))
+        page_size = int(request.args.get('page_size', 20))
+        
+        result = data_agent.get_fund_list(page, page_size)
+        
+        return jsonify({
+            'funds': result['funds'],
+            'total': result['total'],
+            'page': result['page'],
+            'page_size': result['page_size'],
+            'total_pages': result['total_pages'],
+            'status': 'success'
+        })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/funds/<fund_code>', methods=['GET'])
+def get_fund_detail(fund_code):
+    """获取基金详细信息"""
+    try:
+        # 获取基本信息
+        basic_info = data_agent.fetch_fund_basic_info(fund_code)
+        if not basic_info:
+            return jsonify({'error': 'Fund not found'}), 404
+        
+        # 获取净值历史（最近100天）
+        nav_history = data_agent.fetch_fund_nav_history(fund_code, days=100)
+        
+        return jsonify({
+            'basic_info': basic_info,
+            'nav_history': nav_history[:100] if nav_history else [],
+            'status': 'success'
+        })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
