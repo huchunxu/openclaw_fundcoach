@@ -9,10 +9,13 @@ import sys
 import json
 import numpy as np
 
-# 直接导入Agent类（使用相对导入）
-from .strategy_agent import StrategyAgent
-from .portfolio_agent import PortfolioAgent  
-from .risk_agent import RiskAgent
+# 添加项目根目录到Python路径
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# 使用直接导入（修复Mac兼容性问题）
+from strategy_agent import StrategyAgent
+from portfolio_agent import PortfolioAgent  
+from risk_agent import RiskAgent
 
 app = Flask(__name__, 
             template_folder='../frontend/dist',
