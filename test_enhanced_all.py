@@ -170,7 +170,7 @@ def test_enhanced_risk():
     exposure_results = risk_analyzer.comprehensive_risk_exposure_analysis(
         portfolio_weights, fund_factors, fund_sectors, fund_nav_dict
     )
-    print(f"   ✅ 风险暴露分析完成，行业集中度: {exposure_results['sector_concentration']['max_sector_concentration']:.2%}")
+    print(f"   ✅ 风险暴露分析完成，行业集中度: {exposure_results['sector_concentration']['concentration_metrics']['max_sector_concentration']:.2%}")
     
     return stress_results, exposure_results
 
