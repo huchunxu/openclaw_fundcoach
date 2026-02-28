@@ -11,6 +11,7 @@ import os
 import json
 import time
 import random
+import re
 from typing import List, Dict, Optional
 from bs4 import BeautifulSoup
 import logging
@@ -221,7 +222,10 @@ class EnhancedDataFetcher:
             return real_data
         
         # 如果真实数据失败，生成高质量模拟数据
-        return self._generate_high_quality_simulated_data(fund_code, days)
+        simulated_data = self._generate_high_quality_simulated_data(fund_code, days)
+        if not simulated_data.empty:
+            self._cache_data(fund_code, simulated_data)
+        return simulated_data
     
     def _fetch_real_fund_data(self, fund_code: str, days: int = 1095) -> pd.DataFrame:
         """获取真实基金数据"""
