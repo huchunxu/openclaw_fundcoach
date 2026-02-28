@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AutoModePage from './pages/AutoModePage';
 import ManualModePage from './pages/ManualModePage';
+import UserManualPage from './pages/UserManualPage';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/auto" element={<AutoModePage />} />
           <Route path="/manual" element={<ManualModePage />} />
+          <Route path="/manual-guide" element={<UserManualPage />} />
         </Routes>
       </main>
       <footer className="bg-white border-t mt-12">

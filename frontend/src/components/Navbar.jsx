@@ -23,6 +23,9 @@ const Navbar = () => {
             <Link to="/manual" className="hover:text-blue-200 transition-colors">
               手动模式
             </Link>
+            <Link to="/manual-guide" className="hover:text-blue-200 transition-colors">
+              使用手册
+            </Link>
           </div>
         </div>
       </div>
