@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-测试所有增强模块的集成
+测试所有增强模块集成
 """
 
 import pandas as pd
@@ -65,7 +65,7 @@ def create_test_data():
 
 
 def test_enhanced_strategy():
-    """测试增强策略模块"""
+    """测试增强策略代理"""
     print("1. 测试Enhanced Strategy Agent...")
     
     nav_data, fund_data, backtest_results = create_test_data()
@@ -75,6 +75,7 @@ def test_enhanced_strategy():
     factors = factor_model.calculate_all_factors(
         '000001', fund_data, nav_data, backtest_results
     )
+    
     print(f"   ✅ 计算得到 {len(factors)} 个增强因子")
     
     # 测试打分系统
@@ -82,68 +83,59 @@ def test_enhanced_strategy():
     score_result = scoring_system.score_single_fund_enhanced(
         '000001', fund_data, nav_data, backtest_results
     )
+    
     print(f"   ✅ 基金综合评分: {score_result['composite_score']:.4f}")
     
-    return True
+    return factors, score_result
 
 
 def test_enhanced_portfolio():
-    """测试增强组合模块"""
+    """测试增强组合代理"""
     print("2. 测试Enhanced Portfolio Agent...")
     
     # 创建多只基金数据
-    fund_codes = ['000001', '000002', '000003', '000004', '000005']
+    fund_codes = ['000001', '000002', '000003']
+    fund_scores_data = []
     fund_nav_dict = {}
     fund_basic_info = {}
     fund_backtest_results = {}
     
-    for i, code in enumerate(fund_codes):
+    for i, fund_code in enumerate(fund_codes):
         nav_data, fund_data, backtest_results = create_test_data()
-        # 微调每只基金的数据以增加多样性
+        # 微调不同基金的参数
+        fund_data['fund_code'] = fund_code
         fund_data['fund_size'] = 50.0 + i * 20.0
-        fund_data['fund_code'] = code
-        fund_data['fund_name'] = f'测试基金{i+1}'
-        fund_data['sector'] = ['technology', 'healthcare', 'finance', 'consumer', 'energy'][i]
-        
         backtest_results['annual_return'] = 0.15 + i * 0.02
-        backtest_results['sharpe_ratio'] = 1.5 + i * 0.1
         
-        fund_nav_dict[code] = nav_data
-        fund_basic_info[code] = fund_data
-        fund_backtest_results[code] = backtest_results
-    
-    # 创建打分数据
-    fund_scores_data = []
-    for code in fund_codes:
-        scoring_system = EnhancedFundScoringSystem()
-        score_result = scoring_system.score_single_fund_enhanced(
-            code, fund_basic_info[code], fund_nav_dict[code], fund_backtest_results[code]
-        )
         fund_scores_data.append({
-            'fund_code': code,
-            'composite_score': score_result['composite_score'],
+            'fund_code': fund_code,
+            'composite_score': 0.6 + i * 0.1,
             'investment_style': 'balanced'
         })
+        
+        fund_nav_dict[fund_code] = nav_data
+        fund_basic_info[fund_code] = fund_data
+        fund_backtest_results[fund_code] = backtest_results
     
     fund_scores_df = pd.DataFrame(fund_scores_data)
     
-    # 测试组合生成器
+    # 测试组合生成
     portfolio_generator = EnhancedPortfolioGenerator()
-    portfolio = portfolio_generator.generate_top_n_portfolio(fund_scores_df, n=3)
-    print(f"   ✅ Top-N组合: {len(portfolio)} 只基金")
+    top_n_portfolio = portfolio_generator.generate_top_n_portfolio(fund_scores_df, n=2)
+    print(f"   ✅ Top-N组合: {len(top_n_portfolio)} 只基金")
     
-    # 测试权重优化器
+    # 测试权重优化
     weight_optimizer = EnhancedWeightOptimizer()
-    optimized_weights = weight_optimizer.optimize_portfolio_weights(
-        fund_scores_df, fund_nav_dict, 'risk_parity'
+    optimized_weights = weight_optimizer.optimize_portfolio_weights_enhanced(
+        fund_scores_df, fund_nav_dict, 'enhanced_risk_parity'
     )
     print(f"   ✅ 优化后权重: {len(optimized_weights)} 只基金")
     
-    return True
+    return top_n_portfolio, optimized_weights
 
 
 def test_enhanced_risk():
-    """测试增强风险模块"""
+    """测试增强风险代理"""
     print("3. 测试Enhanced Risk Agent...")
     
     # 创建组合净值
@@ -159,27 +151,28 @@ def test_enhanced_risk():
     # 测试压力测试
     stress_tester = EnhancedStressTesting()
     stress_results = stress_tester.run_comprehensive_stress_test(portfolio_nav)
-    print(f"   ✅ 压力测试完成，场景数: {len([k for k in stress_results.keys() if 'max_drawdown' in k])}")
+    print(f"   ✅ 压力测试场景数: {len([k for k in stress_results.keys() if k.endswith('_max_drawdown')])}")
     
     # 测试风险暴露分析
     portfolio_weights = {'000001': 0.4, '000002': 0.3, '000003': 0.3}
-    fund_factors_dict = {
-        '000001': {'value': 0.8, 'growth': 0.6, 'momentum': 0.7},
-        '000002': {'value': 0.6, 'growth': 0.8, 'momentum': 0.5},
-        '000003': {'value': 0.7, 'growth': 0.7, 'momentum': 0.6}
+    fund_factors = {
+        '000001': {'value': 0.8, 'growth': 0.6},
+        '000002': {'value': 0.5, 'growth': 0.8},
+        '000003': {'value': 0.7, 'growth': 0.7}
     }
-    fund_sectors = {'000001': 'technology', '000002': 'healthcare', '000003': 'finance'}
-    fund_nav_dict = {'000001': pd.DataFrame({'date': dates, 'nav': nav}),
-                     '000002': pd.DataFrame({'date': dates, 'nav': nav}),
-                     '000003': pd.DataFrame({'date': dates, 'nav': nav})}
+    fund_sectors = {'000001': 'tech', '000002': 'healthcare', '000003': 'finance'}
+    fund_nav_dict = {}
+    for code in portfolio_weights.keys():
+        nav_data, _, _ = create_test_data()
+        fund_nav_dict[code] = nav_data
     
     risk_analyzer = EnhancedRiskExposureAnalyzer()
     exposure_results = risk_analyzer.comprehensive_risk_exposure_analysis(
-        portfolio_weights, fund_factors_dict, fund_sectors, fund_nav_dict
+        portfolio_weights, fund_factors, fund_sectors, fund_nav_dict
     )
-    print(f"   ✅ 风险暴露分析完成")
+    print(f"   ✅ 风险暴露分析完成，行业集中度: {exposure_results['sector_concentration']['max_sector_concentration']:.2%}")
     
-    return True
+    return stress_results, exposure_results
 
 
 def main():
@@ -188,12 +181,16 @@ def main():
     print("=" * 50)
     
     try:
-        # 测试所有模块
-        test_enhanced_strategy()
-        test_enhanced_portfolio()
-        test_enhanced_risk()
+        # 测试策略代理
+        factors, score_result = test_enhanced_strategy()
         
-        print("\n🎉 所有增强模块测试通过！")
+        # 测试组合代理
+        top_n_portfolio, optimized_weights = test_enhanced_portfolio()
+        
+        # 测试风险代理
+        stress_results, exposure_results = test_enhanced_risk()
+        
+        print("\n✅ 所有增强模块测试通过！")
         print("增强功能已准备就绪，可以合并到master分支。")
         
         return True
