@@ -1,0 +1,26 @@
+============================================================
+🚀 基金教练 API 服务启动
+============================================================
+端口：5000
+地址：http://localhost:5000
+
+可用接口:
+  GET  /api/health          - 健康检查
+  GET  /api/funds/list      - 基金列表
+  GET  /api/funds/<code>    - 基金详情
+  GET  /api/analysis/full   - 完整分析
+  POST /api/portfolio/generate - 生成组合
+  POST /api/portfolio/backtest - 组合回测
+  POST /api/risk/assess     - 风险评估
+  GET  /api/ranking         - 基金排名
+  POST /api/compare         - 基金对比
+============================================================
+ * Serving Flask app 'api_server' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://172.19.21.45:5000/ (Press CTRL+C to quit)
+127.0.0.1 - - [01/Mar/2026 11:38:27] "GET /api/health HTTP/1.1" 200 -
