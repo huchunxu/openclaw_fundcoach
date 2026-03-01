@@ -4,6 +4,8 @@ import HomePage from './pages/HomePage';
 import AutoModePage from './pages/AutoModePage';
 import ManualModePage from './pages/ManualModePage';
 import UserManualPage from './pages/UserManualPage';
+import AnalysisDashboard from './pages/AnalysisDashboard';
+import FundCompare from './pages/FundCompare';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -16,6 +18,8 @@ function App() {
           <Route path="/auto" element={<AutoModePage />} />
           <Route path="/manual" element={<ManualModePage />} />
           <Route path="/manual-guide" element={<UserManualPage />} />
+          <Route path="/analysis" element={<AnalysisDashboard />} />
+          <Route path="/compare" element={<FundCompare />} />
         </Routes>
       </main>
       <footer className="bg-white border-t mt-12">

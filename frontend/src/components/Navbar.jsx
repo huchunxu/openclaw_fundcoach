@@ -14,21 +14,11 @@ const Navbar = () => {
           </Link>
           
           <div className="hidden md:flex space-x-6">
-            <Link to="/" className="hover:text-blue-200 transition-colors">
-              首页
-            </Link>
-            <Link to="/analysis" className="hover:text-blue-200 transition-colors">
-              📊 分析仪表盘
-            </Link>
-            <Link to="/auto" className="hover:text-blue-200 transition-colors">
-              自动模式
-            </Link>
-            <Link to="/manual" className="hover:text-blue-200 transition-colors">
-              手动模式
-            </Link>
-            <Link to="/manual-guide" className="hover:text-blue-200 transition-colors">
-              使用手册
-            </Link>
+            <Link to="/" className="hover:text-blue-200 transition-colors">首页</Link>
+            <Link to="/analysis" className="hover:text-blue-200 transition-colors">📊 分析仪表盘</Link>
+            <Link to="/compare" className="hover:text-blue-200 transition-colors">🔍 基金对比</Link>
+            <Link to="/auto" className="hover:text-blue-200 transition-colors">自动模式</Link>
+            <Link to="/manual" className="hover:text-blue-200 transition-colors">手动模式</Link>
           </div>
         </div>
       </div>
