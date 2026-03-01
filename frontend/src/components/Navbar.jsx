@@ -17,6 +17,9 @@ const Navbar = () => {
             <Link to="/" className="hover:text-blue-200 transition-colors">
               首页
             </Link>
+            <Link to="/analysis" className="hover:text-blue-200 transition-colors">
+              📊 分析仪表盘
+            </Link>
             <Link to="/auto" className="hover:text-blue-200 transition-colors">
               自动模式
             </Link>
